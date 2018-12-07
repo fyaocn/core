@@ -31,7 +31,7 @@ func (c *DockerContainer) ListServices(labels ...string) ([]swarm.Service, error
 func (c *DockerContainer) FindService(namespace []string) (swarm.Service, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), c.callTimeout)
 	defer cancel()
-	service, _, err := c.client.ServiceInspectWithRaw(ctx, c.Namespace(namespace),
+	service, _, err := c.client.ServiceInspectWithRaw(ctx, c.HashNamespace(namespace),
 		types.ServiceInspectOptions{},
 	)
 	return service, err
@@ -70,7 +70,7 @@ func (c *DockerContainer) StopService(namespace []string) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), c.callTimeout)
 	defer cancel()
-	if err := c.client.ServiceRemove(ctx, c.Namespace(namespace)); err != nil && !docker.IsErrNotFound(err) {
+	if err := c.client.ServiceRemove(ctx, c.HashNamespace(namespace)); err != nil && !docker.IsErrNotFound(err) {
 		return err
 	}
 	if err := c.deletePendingContainer(namespace); err != nil {
@@ -103,7 +103,7 @@ func (c *DockerContainer) deletePendingContainer(namespace []string) error {
 
 // ServiceLogs returns the logs of a service.
 func (c *DockerContainer) ServiceLogs(namespace []string) (io.ReadCloser, error) {
-	return c.client.ServiceLogs(context.Background(), c.Namespace(namespace),
+	return c.client.ServiceLogs(context.Background(), c.HashNamespace(namespace),
 		types.ContainerLogsOptions{
 			ShowStdout: true,
 			ShowStderr: true,

@@ -26,14 +26,13 @@ func (c *DockerContainer) CreateNetwork(namespace []string) (id string, err erro
 	if network.ID != "" {
 		return network.ID, nil
 	}
-	namespaceFlat := c.Namespace(namespace)
 	ctx, cancel := context.WithTimeout(context.Background(), c.callTimeout)
 	defer cancel()
-	response, err := c.client.NetworkCreate(ctx, namespaceFlat, types.NetworkCreate{
+	response, err := c.client.NetworkCreate(ctx, c.HashNamespace(namespace), types.NetworkCreate{
 		CheckDuplicate: true, // Cannot have 2 network with the same name
 		Driver:         "overlay",
 		Labels: map[string]string{
-			"com.docker.stack.namespace": namespaceFlat,
+			"com.docker.stack.namespace": c.CleanNamespace(namespace),
 		},
 	})
 	if err != nil {
@@ -81,5 +80,5 @@ func (c *DockerContainer) DeleteNetwork(namespace []string, event EventType) err
 func (c *DockerContainer) FindNetwork(namespace []string) (types.NetworkResource, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), c.callTimeout)
 	defer cancel()
-	return c.client.NetworkInspect(ctx, c.Namespace(namespace), types.NetworkInspectOptions{})
+	return c.client.NetworkInspect(ctx, c.HashNamespace(namespace), types.NetworkInspectOptions{})
 }

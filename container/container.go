@@ -27,7 +27,8 @@ type Container interface {
 	FindService(namespace []string) (swarm.Service, error)
 	ListServices(labels ...string) ([]swarm.Service, error)
 	ListTasks(namespace []string) ([]swarm.Task, error)
-	Namespace(ss []string) string
+	CleanNamespace(ss []string) string
+	HashNamespace(ss []string) string
 	ServiceLogs(namespace []string) (io.ReadCloser, error)
 	SharedNetworkID() (networkID string, err error)
 	StartService(options ServiceOptions) (serviceID string, err error)
@@ -118,7 +119,7 @@ func (c *DockerContainer) FindContainer(namespace []string) (types.ContainerJSON
 	containers, err := c.client.ContainerList(ctx, types.ContainerListOptions{
 		Filters: filters.NewArgs(filters.KeyValuePair{
 			Key:   "label",
-			Value: "com.docker.stack.namespace=" + c.Namespace(namespace),
+			Value: "com.docker.stack.namespace=" + c.CleanNamespace(namespace),
 		}),
 		Limit: 1,
 	})

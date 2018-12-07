@@ -48,10 +48,10 @@ type Mount struct {
 }
 
 func (options *ServiceOptions) toSwarmServiceSpec(c *DockerContainer) swarm.ServiceSpec {
-	namespace := c.Namespace(options.Namespace)
+	namespace := c.CleanNamespace(options.Namespace)
 	return swarm.ServiceSpec{
 		Annotations: swarm.Annotations{
-			Name: namespace,
+			Name: c.HashNamespace(options.Namespace),
 			Labels: mergeLabels(options.Labels, map[string]string{
 				"com.docker.stack.namespace": namespace,
 				"com.docker.stack.image":     options.Image,

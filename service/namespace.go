@@ -19,6 +19,11 @@ func (d *Dependency) namespace() []string {
 	return append(d.service.namespace(), d.Key)
 }
 
+// namespaceVolume returns the namespace of a dependency.
+func (d *Dependency) namespaceVolume(volume string) []string {
+	return append(d.service.namespace(), d.Key)
+}
+
 // EventSubscriptionChannel returns the channel to listen for events from this service.
 func (service *Service) EventSubscriptionChannel() string {
 	return hash.Calculate(append(

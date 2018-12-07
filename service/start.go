@@ -104,7 +104,7 @@ func (d *Dependency) extractVolumes() []container.Mount {
 	volumes := make([]container.Mount, 0)
 	for _, volume := range d.Volumes {
 		volumes = append(volumes, container.Mount{
-			Source: volumeKey(d.service, d.Key, volume),
+			Source: volumeKey(d, volume),
 			Target: volume,
 		})
 	}
@@ -120,7 +120,7 @@ func (d *Dependency) extractVolumesFrom() ([]container.Mount, error) {
 		}
 		for _, volume := range dep.Volumes {
 			volumesFrom = append(volumesFrom, container.Mount{
-				Source: volumeKey(d.service, depName, volume),
+				Source: volumeKey(d, volume),
 				Target: volume,
 			})
 		}
@@ -130,10 +130,6 @@ func (d *Dependency) extractVolumesFrom() ([]container.Mount, error) {
 
 // volumeKey creates a key for service's volume based on the sid to make sure that the volume
 // will stay the same for different versions of the service.
-func volumeKey(s *Service, dependency string, volume string) string {
-	return xstructhash.Hash([]string{
-		s.SID,
-		dependency,
-		volume,
-	}, 1)
+func volumeKey(d *Dependency, volume string) string {
+	return xstructhash.Hash(d.namespaceVolume(volume), 1)
 }
