@@ -29,7 +29,7 @@ func TestCreateNetwork(t *testing.T) {
 	require.Equal(t, id, networkID)
 
 	li := <-dt.LastNetworkCreate()
-	require.Equal(t, c.Namespace(namespace), li.Name)
+	require.Equal(t, c.HashNamespace(namespace), li.Name)
 	require.Equal(t, types.NetworkCreate{
 		CheckDuplicate: true,
 		Driver:         "overlay",
@@ -57,7 +57,7 @@ func TestCreateAlreadyExistingNetwork(t *testing.T) {
 	require.Equal(t, id, networkID)
 
 	li := <-dt.LastNetworkInspect()
-	require.Equal(t, c.Namespace(namespace), li.Network)
+	require.Equal(t, c.HashNamespace(namespace), li.Network)
 	require.Equal(t, types.NetworkInspectOptions{}, li.Options)
 
 	select {
@@ -88,7 +88,7 @@ func TestDeleteNetwork(t *testing.T) {
 	require.Nil(t, c.DeleteNetwork(namespace, EventRemove))
 
 	li := <-dt.LastNetworkInspect()
-	require.Equal(t, c.Namespace(namespace), li.Network)
+	require.Equal(t, c.HashNamespace(namespace), li.Network)
 	require.Equal(t, types.NetworkInspectOptions{}, li.Options)
 
 	require.Equal(t, id, (<-dt.LastNetworkRemove()).Network)
@@ -150,7 +150,7 @@ func TestFindNetwork(t *testing.T) {
 	require.Equal(t, id, network.ID)
 
 	li := <-dt.LastNetworkInspect()
-	require.Equal(t, c.Namespace(namespace), li.Network)
+	require.Equal(t, c.HashNamespace(namespace), li.Network)
 	require.Equal(t, types.NetworkInspectOptions{}, li.Options)
 }
 

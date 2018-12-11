@@ -41,11 +41,12 @@ func TestStopService(t *testing.T) {
 		c, m          = newTesting(t)
 		containerID   = "1"
 		namespace     = []string{"2"}
+		hashNamespace = c.HashNamespace(namespace)
 		fullNamespace = c.Namespace(namespace)
 	)
 
-	mockStatus(t, m, fullNamespace, RUNNING)
-	m.On("ServiceRemove", mock.Anything, fullNamespace).Once().Return(nil)
+	mockStatus(t, m, hashNamespace, RUNNING)
+	m.On("ServiceRemove", mock.Anything, hashNamespace).Once().Return(nil)
 	m.On("ContainerList", mock.AnythingOfType("*context.timerCtx"), types.ContainerListOptions{
 		Filters: filters.NewArgs(filters.KeyValuePair{
 			Key:   "label",
@@ -104,7 +105,7 @@ func TestFindService(t *testing.T) {
 	require.Equal(t, swarmService.ID, service.ID)
 
 	li := <-dt.LastServiceInspectWithRaw()
-	require.Equal(t, c.Namespace(namespace), li.ServiceID)
+	require.Equal(t, c.HashNamespace(namespace), li.ServiceID)
 	require.Equal(t, types.ServiceInspectOptions{}, li.Options)
 }
 
@@ -120,7 +121,7 @@ func TestFindServiceNotExisting(t *testing.T) {
 	require.Equal(t, dockertest.NotFoundErr{}, err)
 
 	li := <-dt.LastServiceInspectWithRaw()
-	require.Equal(t, c.Namespace(namespace), li.ServiceID)
+	require.Equal(t, c.HashNamespace(namespace), li.ServiceID)
 	require.Equal(t, types.ServiceInspectOptions{}, li.Options)
 }
 
@@ -131,8 +132,8 @@ func TestListServices(t *testing.T) {
 	dt := dockertest.New()
 	c, _ := New(ClientOption(dt.Client()))
 	swarmServices := []swarm.Service{
-		{Spec: swarm.ServiceSpec{Annotations: swarm.Annotations{Name: c.Namespace(namespace)}}},
-		{Spec: swarm.ServiceSpec{Annotations: swarm.Annotations{Name: c.Namespace(namespace1)}}},
+		{Spec: swarm.ServiceSpec{Annotations: swarm.Annotations{Name: c.HashNamespace(namespace)}}},
+		{Spec: swarm.ServiceSpec{Annotations: swarm.Annotations{Name: c.HashNamespace(namespace1)}}},
 	}
 
 	dt.ProvideServiceList(swarmServices, nil)
@@ -140,8 +141,8 @@ func TestListServices(t *testing.T) {
 	services, err := c.ListServices(label)
 	require.NoError(t, err)
 	require.Equal(t, 2, len(services))
-	require.Equal(t, c.Namespace(namespace), services[0].Spec.Name)
-	require.Equal(t, c.Namespace(namespace1), services[1].Spec.Name)
+	require.Equal(t, c.HashNamespace(namespace), services[0].Spec.Name)
+	require.Equal(t, c.HashNamespace(namespace1), services[1].Spec.Name)
 
 	require.Equal(t, types.ServiceListOptions{
 		Filters: filters.NewArgs(filters.KeyValuePair{
@@ -169,7 +170,7 @@ func TestServiceLogs(t *testing.T) {
 	require.Equal(t, data, bytes)
 
 	ll := <-dt.LastServiceLogs()
-	require.Equal(t, c.Namespace(namespace), ll.ServiceID)
+	require.Equal(t, c.HashNamespace(namespace), ll.ServiceID)
 	require.Equal(t, types.ContainerLogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,

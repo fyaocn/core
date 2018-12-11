@@ -25,7 +25,7 @@ func TestSharedNetwork(t *testing.T) {
 	require.Equal(t, id, network.ID)
 
 	li := <-dt.LastNetworkInspect()
-	require.Equal(t, c.Namespace([]string{}), li.Network)
+	require.Equal(t, c.HashNamespace([]string{}), li.Network)
 	require.Equal(t, types.NetworkInspectOptions{}, li.Options)
 }
 
@@ -42,7 +42,7 @@ func TestCreateSharedNetworkIfNeeded(t *testing.T) {
 	require.Nil(t, c.createSharedNetworkIfNeeded())
 
 	lc := <-dt.LastNetworkCreate()
-	require.Equal(t, c.Namespace([]string{}), lc.Name)
+	require.Equal(t, c.HashNamespace([]string{}), lc.Name)
 	require.Equal(t, types.NetworkCreate{
 		CheckDuplicate: true,
 		Driver:         "overlay",
@@ -89,6 +89,6 @@ func TestSharedNetworkID(t *testing.T) {
 	require.Equal(t, network, id)
 
 	li := <-dt.LastNetworkInspect()
-	require.Equal(t, c.Namespace([]string{}), li.Network)
+	require.Equal(t, c.HashNamespace([]string{}), li.Network)
 	require.Equal(t, types.NetworkInspectOptions{}, li.Options)
 }

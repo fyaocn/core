@@ -48,7 +48,7 @@ type Mount struct {
 }
 
 func (options *ServiceOptions) toSwarmServiceSpec(c *DockerContainer) swarm.ServiceSpec {
-	namespace := c.CleanNamespace(options.Namespace)
+	namespace := c.Namespace(options.Namespace)
 	return swarm.ServiceSpec{
 		Annotations: swarm.Annotations{
 			Name: c.HashNamespace(options.Namespace),

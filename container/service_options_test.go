@@ -12,9 +12,9 @@ func TestServiceOptionNamespace(t *testing.T) {
 		Namespace: namespace,
 	}
 	c, _ := New()
-	expectedNamespace := c.Namespace(namespace)
 	service := options.toSwarmServiceSpec(c)
-	require.Equal(t, expectedNamespace, service.Annotations.Name)
+	require.Equal(t, c.HashNamespace(namespace), service.Annotations.Name)
+	expectedNamespace := c.Namespace(namespace)
 	require.Equal(t, expectedNamespace, service.Annotations.Labels["com.docker.stack.namespace"])
 	require.Equal(t, expectedNamespace, service.TaskTemplate.ContainerSpec.Labels["com.docker.stack.namespace"])
 }

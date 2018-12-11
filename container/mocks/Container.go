@@ -34,6 +34,20 @@ func (_m *Container) Build(path string) (string, error) {
 	return r0, r1
 }
 
+// Namespace provides a mock function with given fields: ss
+func (_m *Container) Namespace(ss []string) string {
+	ret := _m.Called(ss)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func([]string) string); ok {
+		r0 = rf(ss)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // CreateNetwork provides a mock function with given fields: namespace
 func (_m *Container) CreateNetwork(namespace []string) (string, error) {
 	ret := _m.Called(namespace)
@@ -146,6 +160,20 @@ func (_m *Container) FindService(namespace []string) (swarm.Service, error) {
 	return r0, r1
 }
 
+// HashNamespace provides a mock function with given fields: ss
+func (_m *Container) HashNamespace(ss []string) string {
+	ret := _m.Called(ss)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func([]string) string); ok {
+		r0 = rf(ss)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // ListServices provides a mock function with given fields: labels
 func (_m *Container) ListServices(labels ...string) ([]swarm.Service, error) {
 	_va := make([]interface{}, len(labels))
@@ -196,20 +224,6 @@ func (_m *Container) ListTasks(namespace []string) ([]swarm.Task, error) {
 	}
 
 	return r0, r1
-}
-
-// Namespace provides a mock function with given fields: ss
-func (_m *Container) Namespace(ss []string) string {
-	ret := _m.Called(ss)
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func([]string) string); ok {
-		r0 = rf(ss)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	return r0
 }
 
 // ServiceLogs provides a mock function with given fields: namespace

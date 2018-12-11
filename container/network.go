@@ -32,7 +32,7 @@ func (c *DockerContainer) CreateNetwork(namespace []string) (id string, err erro
 		CheckDuplicate: true, // Cannot have 2 network with the same name
 		Driver:         "overlay",
 		Labels: map[string]string{
-			"com.docker.stack.namespace": c.CleanNamespace(namespace),
+			"com.docker.stack.namespace": c.Namespace(namespace),
 		},
 	})
 	if err != nil {

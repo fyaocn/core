@@ -15,7 +15,7 @@ func (c *DockerContainer) ListTasks(namespace []string) ([]swarm.Task, error) {
 	return c.client.TaskList(ctx, types.TaskListOptions{
 		Filters: filters.NewArgs(filters.KeyValuePair{
 			Key:   "label",
-			Value: "com.docker.stack.namespace=" + c.CleanNamespace(namespace),
+			Value: "com.docker.stack.namespace=" + c.Namespace(namespace),
 		}),
 	})
 }

@@ -33,7 +33,7 @@ func (c *DockerContainer) createSharedNetworkIfNeeded() error {
 		CheckDuplicate: true,
 		Driver:         "overlay",
 		Labels: map[string]string{
-			"com.docker.stack.namespace": c.CleanNamespace([]string{}),
+			"com.docker.stack.namespace": c.Namespace([]string{}),
 		},
 	})
 	return err
