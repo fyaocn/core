@@ -40,11 +40,46 @@ type Port struct {
 	Published uint32
 }
 
-// Mount is a simplify version of mount.Mount.
-type Mount struct {
+// Mount is a generic interface of mount.Mount.
+type Mount interface {
+	swarmMounts(*DockerContainer) mount.Mount
+	source(*DockerContainer) string
+}
+
+// Bind is a bind version of mount.Mount.
+type Bind struct {
 	Source string
 	Target string
-	Bind   bool
+}
+
+func (m *Bind) swarmMounts(_ *DockerContainer) mount.Mount {
+	return mount.Mount{
+		Source: m.Source,
+		Target: m.Target,
+		Type:   mount.TypeBind,
+	}
+}
+
+func (m *Bind) source(_ *DockerContainer) string {
+	return m.Source
+}
+
+// Volume is a volume version of mount.Mount.
+type Volume struct {
+	Namespace []string
+	Target    string
+}
+
+func (m *Volume) swarmMounts(c *DockerContainer) mount.Mount {
+	return mount.Mount{
+		Source: m.source(c),
+		Target: m.Target,
+		Type:   mount.TypeVolume,
+	}
+}
+
+func (m *Volume) source(c *DockerContainer) string {
+	return c.HashNamespace(m.Namespace)
 }
 
 func (options *ServiceOptions) toSwarmServiceSpec(c *DockerContainer) swarm.ServiceSpec {
@@ -66,7 +101,7 @@ func (options *ServiceOptions) toSwarmServiceSpec(c *DockerContainer) swarm.Serv
 				Env:     options.Env,
 				Args:    options.Args,
 				Command: strings.Fields(options.Command),
-				Mounts:  options.swarmMounts(false),
+				Mounts:  options.swarmMounts(c, false),
 			},
 			Networks: options.swarmNetworks(),
 		},
@@ -89,7 +124,7 @@ func (options *ServiceOptions) swarmPorts() []swarm.PortConfig {
 	return ports
 }
 
-func (options *ServiceOptions) swarmMounts(force bool) []mount.Mount {
+func (options *ServiceOptions) swarmMounts(c *DockerContainer, force bool) []mount.Mount {
 	// TOFIX: hack to prevent mount when in CircleCI (Mount in CircleCI doesn't work). Should use CircleCi with machine to fix this.
 	circleCI, errCircle := strconv.ParseBool(os.Getenv("CIRCLECI"))
 	if !force && errCircle == nil && circleCI {
@@ -97,15 +132,7 @@ func (options *ServiceOptions) swarmMounts(force bool) []mount.Mount {
 	}
 	mounts := make([]mount.Mount, len(options.Mounts))
 	for i, m := range options.Mounts {
-		mountType := mount.TypeVolume
-		if m.Bind {
-			mountType = mount.TypeBind
-		}
-		mounts[i] = mount.Mount{
-			Source: m.Source,
-			Target: m.Target,
-			Type:   mountType,
-		}
+		mounts[i] = m.swarmMounts(c)
 	}
 	return mounts
 }

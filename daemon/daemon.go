@@ -63,20 +63,17 @@ func (d *ContainerDaemon) buildServiceOptions(sharedNetworkID string) container.
 		Image:     d.cfg.Core.Image,
 		Env:       container.MapToEnv(d.cfg.DaemonEnv()),
 		Mounts: []container.Mount{
-			{
+			&container.Bind{
 				Source: d.cfg.Docker.Socket,
 				Target: d.cfg.Docker.Socket,
-				Bind:   true,
 			},
-			{
+			&container.Bind{
 				Source: d.cfg.Core.Path,
 				Target: d.cfg.Docker.Core.Path,
-				Bind:   true,
 			},
-			{
+			&container.Bind{
 				Source: filepath.Join(d.cfg.Core.Path, d.cfg.SystemServices.RelativePath),
 				Target: filepath.Join(d.cfg.Docker.Core.Path, d.cfg.SystemServices.RelativePath),
-				Bind:   true,
 			},
 		},
 		Ports: []container.Port{

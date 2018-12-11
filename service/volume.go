@@ -37,7 +37,7 @@ func (d *Dependency) DeleteVolumes() error {
 		wg.Add(1)
 		go func(mount container.Mount) {
 			defer wg.Done()
-			if err := d.service.container.DeleteVolume(mount.Source); err != nil {
+			if err := d.service.container.DeleteVolume(mount); err != nil {
 				errs.Append(err)
 			}
 		}(mount)
