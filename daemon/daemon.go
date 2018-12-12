@@ -83,7 +83,7 @@ func (d *ContainerDaemon) buildServiceOptions(sharedNetworkID string) container.
 			},
 		},
 		Networks: []container.Network{
-			{ID: sharedNetworkID},
+			{ID: sharedNetworkID, Alias: d.cfg.Core.Name},
 		},
 	}
 }
