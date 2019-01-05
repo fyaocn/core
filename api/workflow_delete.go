@@ -27,7 +27,7 @@ func (w *workflowDeletor) Delete(id string) (err error) {
 	if err != nil {
 		return err
 	}
-	exec, err := w.api.ExecuteAndListen(workflowServiceID, workflow.DeleteTaskKey, workflow.DeleteInputs(id))
+	exec, err := w.api.ExecuteTaskAndWaitResult(workflowServiceID, workflow.DeleteTaskKey, workflow.DeleteInputs(id))
 	if err != nil {
 		return err
 	}

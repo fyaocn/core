@@ -32,7 +32,7 @@ func (w *workflowCreator) Create(definition workflowparser.WorkflowDefinition, n
 	if err != nil {
 		return "", err
 	}
-	exec, err := w.api.ExecuteAndListen(workflowServiceID, workflow.CreateTaskKey, inputs)
+	exec, err := w.api.ExecuteTaskAndWaitResult(workflowServiceID, workflow.CreateTaskKey, inputs)
 	if err != nil {
 		return "", err
 	}
