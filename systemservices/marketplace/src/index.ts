@@ -16,11 +16,11 @@ const pollingTime = parseInt(<string>process.env.POLLING_TIME, 10)
 
 const main = async () => {
   const mesg = MESG()
-  const web3 = new Web3(providerEndpoint)
-  const marketplace = new web3.eth.Contract(marketplaceABI, marketplaceAddress) as Marketplace
+  // const web3 = new Web3(providerEndpoint)
+  // const marketplace = new web3.eth.Contract(marketplaceABI, marketplaceAddress) as Marketplace
 
   mesg.listenTask({
-    listServices: listServices(marketplace),
+    listServices: listServices(),
   })
   .on('error', error => console.error('catch listenTask', error))
 
